@@ -3,11 +3,19 @@
   "description": "Fallback temperature warn/crit thresholds. Real reported sensor limits win when available.",
   "overrides": [
     {
-      "name": "AMD Ryzen 9 9950X package and CCD temps",
+      "name": "AMD Ryzen 9 9950X Tctl",
       "device_regex": "^AMD Ryzen 9 9950X\\b",
-      "sensor_regex": "^(Tctl|Tccd\\d+)$",
+      "sensor_regex": "^Tctl$",
       "warn": 90.0,
       "crit": 95.0,
+      "prefer_reported": false
+    },
+    {
+      "name": "AMD Ryzen 9 9950X CCD sensors",
+      "device_regex": "^AMD Ryzen 9 9950X\\b",
+      "sensor_regex": "^Tccd\\d+$",
+      "warn": 85.0,
+      "crit": 90.0,
       "prefer_reported": false
     },
     {
@@ -38,7 +46,7 @@
       "name": "nct6686 Chipset",
       "device_regex": "^nct6686$",
       "sensor_regex": "^Chipset Temperature$",
-      "warn": 85.0,
+      "warn": 90.0,
       "crit": 95.0,
       "prefer_reported": true
     },
@@ -55,7 +63,7 @@
       "device_regex": "^DIMM Thermistor \\(SPD5118\\)$",
       "sensor_regex": "^temp1$",
       "warn": 60.0,
-      "crit": 70.0,
+      "crit": 65.0,
       "prefer_reported": false
     },
     {
