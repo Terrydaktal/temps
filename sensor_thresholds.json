@@ -89,6 +89,14 @@
       "warn": 80.0,
       "crit": 90.0,
       "prefer_reported": true
+    },
+    {
+      "name": "NVIDIA GeForce RTX 5060",
+      "device_regex": "^(NVIDIA\\s+)?GeForce\\s+RTX\\s+5060\\b",
+      "sensor_regex": "^GPU (Core|Memory)$",
+      "warn": 83.0,
+      "crit": 90.0,
+      "prefer_reported": true
     }
   ]
 }

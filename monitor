@@ -381,6 +381,76 @@ def parse_sensors(payload: dict[str, Any]) -> tuple[list[dict[str, Any]], list[d
     return temps, fans
 
 
+def load_nvidia_gpu_temps() -> list[dict[str, Any]]:
+    if shutil.which("nvidia-smi") is None:
+        return []
+
+    try:
+        result = subprocess.run(
+            [
+                "nvidia-smi",
+                "--query-gpu=index,name,temperature.gpu,temperature.memory",
+                "--format=csv,noheader,nounits",
+            ],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return []
+
+    temps: list[dict[str, Any]] = []
+    for raw_line in result.stdout.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+
+        parts = [part.strip() for part in line.split(",")]
+        if len(parts) < 3:
+            continue
+
+        index = parts[0]
+        name = parts[1]
+
+        try:
+            gpu_temp = float(parts[2])
+        except ValueError:
+            gpu_temp = -1.0
+
+        if gpu_temp >= 0:
+            temps.append(
+                {
+                    "chip": f"nvidia-gpu-{index}",
+                    "adapter": "nvidia-smi",
+                    "sensor": "GPU Core",
+                    "device": name,
+                    "temp": gpu_temp,
+                    "max": None,
+                    "crit": None,
+                }
+            )
+
+        if len(parts) >= 4:
+            try:
+                mem_temp = float(parts[3])
+            except ValueError:
+                mem_temp = -1.0
+            if mem_temp >= 0:
+                temps.append(
+                    {
+                        "chip": f"nvidia-gpu-{index}",
+                        "adapter": "nvidia-smi",
+                        "sensor": "GPU Memory",
+                        "device": name,
+                        "temp": mem_temp,
+                        "max": None,
+                        "crit": None,
+                    }
+                )
+
+    return temps
+
+
 def temp_status(temp: float, max_limit: float | None, crit_limit: float | None) -> tuple[str, str]:
     if crit_limit is not None and temp >= crit_limit:
         return "CRITICAL", "magenta"
@@ -516,10 +586,13 @@ def leave_alt_screen() -> None:
 def render_once(use_color: bool) -> int:
     payload = run_sensors_json()
     temps, fans = parse_sensors(payload)
+    temps.extend(load_nvidia_gpu_temps())
     pwm_controls = load_pwm_controls()
     for item in temps:
-        item["device"] = resolve_device_name(item["chip"])
+        if item["device"] == item["chip"]:
+            item["device"] = resolve_device_name(item["chip"])
     apply_threshold_overrides(temps, load_threshold_overrides())
+    temps.sort(key=lambda item: item["temp"], reverse=True)
     for fan in fans:
         fan["device"] = resolve_device_name(fan["chip"])
         channel = fan.get("channel")
