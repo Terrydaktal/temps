@@ -3,6 +3,33 @@
 Readable Linux hardware monitoring dashboard for temperatures and fan speeds.
 
 This project wraps `lm-sensors` JSON output and hwmon/sysfs PWM data into a clearer terminal view than raw `sensors`.
+```
+Temperatures (15)
+  Temp  | Unst  | Crit   | Load                       | Sensor                    | Device                     
+  ------+-------+--------+----------------------------+---------------------------+----------------------------
+  77.6C | 90.0C | 95.0C  | [###################.....] | Tctl                      | AMD Ryzen 9 9950X          
+  77.0C | 90.0C | 95.0C  | [##################......] | AMD TSI 98h (Tctl smooth) | nct6686                    
+  75.1C | 90.0C | 95.0C  | [##################......] | Tccd1                     | AMD Ryzen 9 9950X          
+  64.8C | 75.0C | 85.0C  | [################........] | SSD Controller (Sensor 1) | WD_BLACK SN8100 2000GB     
+  61.8C | 90.0C | 95.0C  | [###############.........] | Tccd2                     | AMD Ryzen 9 9950X          
+  60.0C | 85.0C | 100.0C | [##############..........] | VRM (Thermistor 15)       | nct6686                    
+  58.5C | 85.0C | 100.0C | [##############..........] | temp1                     | Realtek Ethernet Controller
+  57.5C | 60.0C | 65.0C  | [##############..........] | temp1                     | DIMM Thermistor (SPD5118)  
+  49.0C | 65.0C | 80.0C  | [############............] | System (Thermistor 14)    | nct6686                    
+  47.9C | 79.8C | 84.8C  | [###########.............] | Composite                 | WD Blue SN570 1TB          
+  47.9C | 89.8C | 93.8C  | [###########.............] | Composite                 | WD_BLACK SN8100 2000GB     
+  46.9C | 70.0C | 80.0C  | [###########.............] | NAND (Sensor 2)           | WD_BLACK SN8100 2000GB     
+  46.0C | 70.0C | 85.0C  | [###########.............] | temp1                     | MediaTek MT7921 Wi-Fi      
+  44.0C | 83.0C | 90.0C  | [###########.............] | GPU Core                  | NVIDIA GeForce RTX 5060    
+  39.5C | 80.0C | 90.0C  | [#########...............] | Socket (Thermistor 16)    | nct6686                    
+
+Fan Speeds (3)
+  RPM  | Load                              | Control | Fan           | Device 
+  -----+-----------------------------------+---------+---------------+--------
+  1608 | [################........]  65.1% | 166/255 | Chassis Fan 2 | nct6686
+  1224 | [############............]  50.2% | 128/255 | Chassis Fan 1 | nct6686
+  1004 | [############............]  50.2% | 128/255 | CPU Fan       | nct6686
+```
 
 ## Requirements
 
