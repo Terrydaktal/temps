@@ -667,6 +667,17 @@ def build_frame(use_color: bool) -> str:
     return frame.getvalue()
 
 
+def draw_live_frame(frame: str, footer: str) -> None:
+    # Redraw the full frame in one synchronized terminal update when supported.
+    composed = frame.rstrip("\n") + "\n\n" + footer + "\n"
+    # CSI ? 2026 h/l: synchronized output mode (supported by many modern terminals).
+    sys.stdout.write("\033[?2026h")
+    sys.stdout.write("\033[H\033[2J")
+    sys.stdout.write(composed)
+    sys.stdout.write("\033[?2026l")
+    sys.stdout.flush()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Show a readable dashboard of all temperatures and fan speeds."
@@ -710,10 +721,7 @@ def main() -> int:
         with suppress_stdin_echo():
             while True:
                 frame = build_frame(use_color)
-                sys.stdout.write("\033[H\033[J")
-                sys.stdout.write(frame)
-                sys.stdout.write("\nPress Ctrl+C to stop.\n")
-                sys.stdout.flush()
+                draw_live_frame(frame, "Press Ctrl+C to stop.")
                 time.sleep(args.watch)
     except KeyboardInterrupt:
         return 0
